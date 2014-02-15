@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+        <record id='action_wizard_estanteria_individual' model='ir.actions.act_window'>
+            <field name='name'>Modificación Estanteria</field>
+            <field name='res_model'>bag.estanteria_individual</field>
+            <field name='view_type'>form</field>
+            <field name='view_mode'>form</field>
+            <field name='target'>new</field>            
+        </record>
+
+                    
+        <record id='view_wizard_estanteria_individual' model='ir.ui.view'>
+            <field name='name'>Puestos de Trabajo</field>
+            <field name='model'>bag.estanteria_individual</field>
+            <field name='type'>form</field>
+            <field name='arch' type='xml'>
+                <form string='Modificación Estantería'>
+                    <field name='service_id' required='True'/>
+                    <field name='shelving_id' string='Puesto' required='True'/>                    
+                    <group col='4' colspan='4'>
+                        <button icon='gtk-cancel' special='cancel' string='Cancel'/>
+                        <button icon='gtk-ok' type='object' string='Finalizar' name='trabajo_realizado'/>
+                    </group>
+                </form>
+            </field>
+        </record>  
+        
+    <menuitem 
+        action="action_wizard_estanteria_individual" 
+        id="menu_wizard_estanteria_individual" 
+        parent="menu_repair_root"/>
+
+         <record id='action_wizard_estanteria_grupal' model='ir.actions.act_window'>
+            <field name='name'>Modificación Estanteria Grupal</field>
+            <field name='res_model'>bag.estanteria_grupal</field>
+            <field name='view_type'>form</field>
+            <field name='view_mode'>form</field>
+            <field name='target'>new</field>            
+        </record>
+
+                    
+        <record id='view_wizard_estanteria_grupal' model='ir.ui.view'>
+            <field name='name'>Modificación Estantería Grupal</field>
+            <field name='model'>bag.estanteria_grupal</field>
+            <field name='type'>form</field>
+            <field name='arch' type='xml'>
+                <form string='Modificación Estantería Grupal'>
+                    <field name='shelving_id' string='Puesto' required='True'/>    
+                    <newline/>
+                    <field name='service_ids' string='Ordenes Reparacion'>                    
+                        <tree string='Ordenes Reparación' editable='bottom'>
+                            <field name='service_id' string='Número'/>
+                        </tree>
+                    </field>                  
+                    <group col='4' colspan='4'>
+                        <button icon='gtk-cancel' special='cancel' string='Cancel'/>
+                        <button icon='gtk-ok' type='object' string='Finalizar' name='trabajo_realizado'/>
+                    </group>
+                </form>
+            </field>
+        </record>  
+        
+    <menuitem
+        action='action_wizard_estanteria_grupal'
+        id='menu_wizard_estanteria_grupal'
+        parent='menu_repair_root'
+        groups='grupo_logistica_xml'/>
+                     
+    </data>
+</openerp>

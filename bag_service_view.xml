@@ -1,0 +1,660 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+<!--Menu Principal-->
+        <menuitem id="menu_bag_service_main" name="Reparaciones" />
+
+<!--Formulario Reparaciones -->
+<record model="ir.ui.view" id="view_service_form">
+	<field name="name">service.form</field>
+	<field name="model">bag.service</field>
+  	<field name="type">form</field>
+  	<field eval="4" name="priority"/>
+  	<field name="arch" type="xml">
+  	<form string="Service Order" version="v7">
+<!--Hardcodeado el ID = 24 de state_id para que sea required solo si el status es "Pendiente de Buscar"-->
+  		<group col="8" colspan="4" class="grupo_encabezado" >
+			<field name="name" string="Numero Orden" class="nro_orden" readonly="1"/>
+			<field name='type' string='Tipo' on_change='onchange_type(type)' attrs="{'required':[('state_id','!=',24)],}" />
+			<field name="date" string="Fecha Ingreso" select="1" readonly="1" class="negrita"/>
+			<field name="date_promised" string="Fecha Prometida" select="1" readonly="False" attrs="{'required':[('state_id','!=',24)],}"/>
+		</group>
+		<group col="8" colspan="2">
+			<field name="partner_id" colspan="8" readonly="False" string="Cliente" select="1" 
+			on_change="onchange_partner_id(partner_id)" attrs="{'required':[('state_id','!=',24)],}" 
+			context="{'form_view_ref':'bag_service.bag_res_partner__form_view'}"/>
+<!--                        <field name="first_name" colspan="2" string="Nombre"/>-->
+			<!--<separator orientation="vertical"/>-->
+			<!--<group colspan="8">-->
+				<field name="address_str" string="Domicilio" colspan="4"/>
+				<field name="address_num_str" string="Num" colspan="2"/>
+				<field name="piso_dpto_str" string="Piso/Depto" colspan="2"/>
+				<field name="zone_str" string="Zona" colspan="4"/>
+				<field name="phone_str" string="Tel/Cel" colspan="4"/>
+			<!--</group>-->
+		</group>
+		<notebook colspan="4">
+			<page string="Datos Basicos">
+				<group col="10" colspan="4">
+					<field name="type_id" string="Tipo" readonly="False" attrs="{'required':[('state_id','!=',24)],}"/>
+					<field name="format_id" string="Formato" readonly="False" attrs="{'required':[('state_id','!=',24)],}"/>
+					<field name="color_id" string="Color" readonly="False" attrs="{'required':[('state_id','!=',24)],}"/>
+					<field name="material_id" string="Material" readonly="False" attrs="{'required':[('state_id','!=',24)],}"/>
+					<field name="size_id" string="Tamaño" readonly="False" attrs="{'required':[('state_id','!=',24)],}"/>
+					<field name="description" string="Descripcion" colspan="6" readonly="False" />
+					<field name="brand" string="Marca" attrs="{'required':[('state_id','!=',24)],}"/>
+					<field name="model" string="Modelo"/>
+				</group>
+				<group col="8" colspan="4">
+					<group col="4" colspan="4">
+						<field name="airline_id" string="Aerolinea" select="1" readonly="False" attrs="{'required':[('state_id','!=',24)],}"/>
+						<field name="branch" string="Sucursal" readonly="False"/>
+						<field name="scale_id" string="Escala" readonly="False"/>
+						<field name="incoming_guide" string="Guia Entrante"/>
+						<field name="case_number" string="Nro. Caso" readonly="False"/>
+						<field name="outgoing_guide" string="Guia Saliente"/>
+					</group>
+					<field name="internal_notes" colspan="4" class="internal_notes"/>
+              	</group>
+				<group col="10" colspan="4">
+					<group col="2" colspan="2">
+						<field name="estimated_price" string="Costo Estimado" readonly="1"/>
+						<field name="prepayment" string="Seña" attrs="{'invisible':[('type','=','airline')]}" readonly="1"/>
+						<field name="shipping_cost" string="Costo Envio"/>
+                  		<field name="price_buffer" string="Importe Total"  readonly="1"/>
+                  		<!--<group col="2" colspan="1">-->
+							<separator string="Descuento" colspan="4" />
+							<field name="base_discount" string="Descuento(%%)" on_change="onchange_base_discount(base_discount,estimated_price, shipping_cost)"/>
+						<!--</group>-->
+					</group>
+					<group col="8" colspan="2">
+						<field name="action" string="Reparar / Reemplazar" select="1" colspan="4"/>
+						<field name="user_id" string="Recibido por" colspan="4"/>
+						<field name="state_id" string="Estado" select="1" readonly="False" colspan="4"/>
+						<field name="shelving_id" string="Estanteria" colspan="4"/>
+						<field name="urgent" string="Urgente" select="1" readonly="False"/>
+						<field name="papers" string="Papeles" select="1"/>
+						<field name="attention" string="Atencion"/>
+						<field name="monitoring" string="Seguimiento" select="1"/>
+						<group col="10" colspan="8">
+							<field name="send" string="Enviar" select="1" readonly="False"/>
+							<field name="send_id" on_change="onchange_envio_id(send_id,airline_id,date,base_discount)" attrs="{'invisible':[('send','!=',True)]}" nolabel="1" />
+							<field name="taxi" string="Remisero" select="1"/>
+							<field name="baby_carriage" string="Coche BB" select="1"/>
+							<field name="date_return" string="F Entregado" select="1" readonly="False"/>
+						</group>
+					</group>
+				</group>
+				<field colspan="2" name="work_to_be_done" nolabel="1" on_change='onchange_work_to_be_done(work_to_be_done,airline_id,date,base_discount,shipping_cost)'>
+					<tree string="Trabajo a Realizar" editable="top">
+						<field name="work_id" string="Trabajo" on_change="onchange_work_id(parent.date, work_id, parent.airline_id, quantity)"/>
+						<field name="quantity" string="Cantidad" groups='bag_service.grupo_facturacion_xml,bag_service.grupo_caja_xml,bag_service.grupo_mostrador_xml,bag_service.grupo_logistica_xml,bag_service.grupo_at_cliente_xml'/> <!--on_change="onchange_work_id(parent.id, work_id, parent.airline_id, quantity)"-->
+						<field name="price" string="Importe" groups='bag_service.grupo_facturacion_xml,bag_service.grupo_caja_xml'/>
+					</tree>
+				</field>
+              	<group col="2" colspan="2" groups='bag_service.grupo_facturacion_xml,bag_service.grupo_at_cliente_xml,bag_service.grupo_logistica_xml,bag_service.grupo_mostrador_xml'>
+					<separator colspan="2" string="Observaciones de las Tareas"/>
+					<field name="quotation_notes" nolabel="1" colspan="2" groups='bag_service.grupo_facturacion_xml,bag_service.grupo_at_cliente_xml,bag_service.grupo_logistica_xml,bag_service.grupo_mostrador_xml'/>
+				</group>
+			</page>
+			<page string='Caja' groups='bag_service.grupo_caja_xml'>
+            	<group colspan='4'>
+					<field colspan='2' name='total_payments' string='Total Pagos' readonly="1" />
+					<field colspan='2' name='balance' string='Saldo' readonly="1"/>
+				</group>
+				<field colspan='2' name='payments' nolabel='1' on_change='onchange_work_payments(payments,price)'>                                
+					<tree string='Pagos' editable='top' >
+						<field name='payment_date' required='True' string='Fecha'/>
+						<field name='payment_type' required='True' string='Tipo de Operacion' groups='bag_service.grupo_facturacion_xml,bag_service.grupo_caja_xml'/>
+						<field name='invoice_number' required='True' string='Factura' groups='bag_service.grupo_facturacion_xml,bag_service.grupo_caja_xml,bag_service.grupo_mostrador_xml'/>
+						<field name='amount' required='True' string='Importe' groups='bag_service.grupo_facturacion_xml,bag_service.grupo_caja_xml'/>
+						<field name='method' required='True' string='Forma de Pago' groups='bag_service.grupo_facturacion_xml,bag_service.grupo_caja_xml'/>
+						<field name='cupon_number' string='Cupon' groups='bag_service.grupo_facturacion_xml,bag_service.grupo_caja_xml'/>
+					</tree>
+				</field>
+			</page>
+			<page string="Datos Reparacion" groups='bag_service.grupo_admin_xml,bag_service.grupo_facturacion_xml'>
+				<field colspan="2" name="work_done" nolabel="1">
+					<tree string="Trabajo Realizado" editable="top">
+                    	<field name="work_id" string="Trabajo"/>
+                        <field name="quantity" string="Cantidad"/>
+                        <field name="price" string="" attrs="{'invisible':True}"/>
+                    </tree>
+				</field>
+				<group col="4" colspan="2">
+					<separator colspan="4" string="Ubicaciones"/>
+					<field name="location_id" string="Ubicacion Actual" select="1" readonly="False"/>
+					<field name="retires_location_id" string="Retira en"/>
+				</group>
+				<separator colspan="2" string="Nota en Reparacion"/>
+				<separator colspan="2" string="Detalles"/>
+				<field name="work_made" nolabel="1" colspan="2"/>
+				<group col="4" colspan="2">
+					<field name="repaired_by_id" string="Reparado por"/>
+					<field name="labor_price" string="Mano de obra"/>
+					<field name="materials_price" string="Materiales"/>
+					<field name="price" string="Importe Total"/>
+					<field name="free" string="Sin Cargo"/>
+					<field name="summary_number" string="Nro. Resumen" readonly="False"/>
+					<field name="invoice_number" string="Nro. Factura"/>
+					<field name="marca_resumen" string="Marca Resumen"/>
+					<field name="web_password" string="Web Password"/>
+				</group>
+			</page>
+            <page string="Datos Envio" groups='bag_service.grupo_facturacion_xml,bag_service.grupo_at_cliente_xml,bag_service.grupo_logistica_xml,bag_service.grupo_mostrador_xml'>
+				<group col="4" colspan="2">
+					<separator colspan="4" string="Datos de Ingreso"/>
+					<field name="incoming_type"/>
+					<field name="persona_retiro"/>
+					<field name="lugar_retiro"/>
+					<field name="fecha_retiro"/>
+					<field name="costo_adicional_retiro"/>
+				</group>
+				<group col="4" colspan="2">
+					<separator colspan="4" string="Datos de Egreso"/>
+					<field name="outgoing_type"/>
+					<field name="persona_llevo"/>
+					<field name="lugar_llevo"/>
+					<field name="fecha_llevo"/>
+					<field name="costo_adicional_llevo"/>
+				</group>
+            </page>
+			<page string="Autorizaciones" groups='bag_service.grupo_facturacion_xml,bag_service.grupo_at_cliente_xml'>
+				<field name="autorizo_quien"/>
+				<field name="autorizo_medio"/>
+				<field name="autorizo_fecha"/>
+				<field name="autorizo_que"/>
+				<field name="autorizo_solicito_id"/>
+				<field name="autorizo_avisa_id"/>
+			</page>
+			<page string="Problemas | Detalle" groups='bag_service.grupo_facturacion_xml,bag_service.grupo_at_cliente_xml,bag_service.grupo_logistica_xml'>
+				<field name="problemas" nolabel="1">
+					<tree string="Problemas">
+						<field name="fecha_volvio"/>
+						<field name="como_volvio"/>
+						<field name="que_se_le_hizo"/>
+						<field name="responsable"/>
+						<field name="responsable_aerolinea"/>
+						<field name="fecha_envio"/>
+						<field name="como_envio"/>
+						<field name="nueva_entrega"/>
+					</tree>
+				</field>
+			</page>
+			<page string="Llamados | Detalle" groups='bag_service.grupo_facturacion_xml,bag_service.grupo_at_cliente_xml,bag_service.grupo_logistica_xml'>
+				<field name="llamados" nolabel="1">
+					<tree string="Llamados">
+						<field name="fecha"/>
+						<field name="quien_llamo"/>
+						<field name="detalle"/>
+						<field name="quien_tomo"/>
+                        <field name="acciones"/>
+					</tree>
+				</field>
+			</page>
+			<page string="Samsonite" groups='bag_service.grupo_mostrador_xml'>
+				<field name="samsonite_nroremito"/>
+				<field name="samsonite_nrointerno"/>
+				<field name="samsonite_state_id"/>
+				<field name="samsonite_producto_id"/>
+				<field name="samsonite_lugarcompra"/>
+				<field name="samsonite_nrofactura"/>
+				<field name="samsonite_fechacompra"/>
+				<field name="samsonite_presupuestado"/>
+			</page>
+			<page string="Modificaciones Detalle" groups='bag_service.grupo_admin_xml'>
+				<field name="modificaciones_detalle" nolabel="1" colspan="4" readonly="True"/>
+			</page>
+		</notebook>
+	</form>
+	</field>
+</record>
+
+<!--Vista Tree de Ordenes de Reparacion-->
+        <record model="ir.ui.view" id="view_service_tree">
+            <field name="name">service.tree</field>
+            <field name="model">bag.service</field>
+            <field name="type">tree</field>
+            <field eval="4" name="priority"/>
+            <field name="arch" type="xml" >
+        <tree string="Repair Order" version = "7.0" class="oe_tabla_reparaciones" >
+        
+                    <field name="marca_resumen" string="MR" />
+                    <field name="marca_hoja_ruta" string="MH" />
+                    <field name="invoiced" string="F" />
+                    <field name="name" string="nro."/>
+                    <field name="date" string="Fecha" readonly="True"/>
+                    <field name="date_promised" string="Fecha Prometida" readonly="True"/>
+                    <field name="state_id" string="Estado" readonly="True"/>
+                    <field name="airline_id" string="Origen" readonly="True"/>
+                    <field name="partner_id" string="Cliente" readonly="True"/>
+                    <field name="scale_id" string="Escala" readonly="True"/>
+                    <field name="case_number" string="Nro. Caso" readonly="True"/>
+                    <field name="branch" string="Sucursal" readonly="True"/>
+                    <field name="date_return" string="Fecha Entregado" readonly="True"/>
+<!--                    <field name="address" string="Domicilio" readonly="True"/>-->
+                    <field name="send" string="Enviar" readonly="True"/>
+                    <field name="type_id" string="Tipo" readonly="True"/>
+                    <field name="format_id" string="Formato" readonly="True"/>
+                    <field name="color_id" string="Color" readonly="True"/>
+                    <field name="material_id" string="Material" readonly="True"/>
+                    <field name="size_id" string="Tamaño" readonly="True"/>
+                    <field name="urgent" string="Urgente" readonly="True"/>
+                    <field name="shelving_id" string="Ubicacion" readonly="True"/>
+                    <field name="summary_number" string="Resumen" readonly="True"/>
+                    <field name="description" string="Descripcion" readonly="True"/>
+
+                </tree>
+            </field>
+        </record>
+
+<!--Vista Search de Ordenes de Reparacion-->
+        <record model="ir.ui.view" id="view_service_search">
+            <field name="name">service.search</field>
+            <field name="model">bag.service</field>
+            <field name="type">search</field>
+            <field eval="4" name="priority"/>
+            <field name="arch" type="xml">
+                <search string="Service Order">
+                    <group>
+            <field name="name" string="nro."/>
+                        <field name="airline_id" string="Origen"/>
+                        <field name="partner_id" string="Cliente"/>
+                        <field name="date" string="Fecha Ingreso"/>
+                        <field name="state_id" string="Estado"/>
+                        <filter name="marca_resumen" string="MR" icon="terp-personal" domain="[('marca_resumen','=','1')]"/>
+                        <filter name="marca_hoja_ruta" string="MH" icon="terp-personal" domain="[('marca_hoja_ruta','=','1')]"/>
+                        <filter name="invoiced" string="F" icon="terp-personal" domain="[('invoiced','=','1')]"/>
+                        <field name="date_promised" string="Fecha Prometida"/>
+                        <field name="scale_id" string="Escala"/>
+                        <field name="case_number" string="Nro. Caso"/>
+                        <filter string="Enviar" name="send" icon="terp-personal" domain="[('send','=','1')]" />
+                        <filter string="Urgente" name="urgent"  icon="terp-personal" domain="[('urgent','=','1')]" />
+                    </group>
+                    <newline/>
+                    <group expand="0" string="Samsonite...">
+                        <field name="samsonite_nroremito" string="Nro Remito"/>
+                        <field name="samsonite_nrointerno" string="Nro Interno"/>
+                        <field name="samsonite_state_id" string="Estado"/>
+                        <field name="samsonite_producto_id" string="SKU"/>
+                        <field name="samsonite_nrofactura" string="Nro Factura"/>
+                        <field name="samsonite_fechacompra" string="Fecha Factura"/>
+                        <field name="samsonite_presupuestado" string="Presupuestado"/>
+                   </group>
+                    <newline/>
+                    <group expand="0" string="Agrupar...">
+                       <filter string="Aerolinea" icon="terp-personal" domain="[]" context="{'group_by' : 'airline_id'}" />
+                       <filter string="Estado" icon="terp-personal" domain="[]" context="{'group_by' : 'state_id'}" />
+                   </group>
+                </search>
+            </field>
+        </record>
+
+<!--Accion que abre la vista Reparaciones Search-->
+        <record model="ir.actions.act_window" id="action_service">
+            <field name="name">Orden de Reparacion</field>
+            <field name="res_model">bag.service</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+      <field name="search_view_id" ref="view_service_search"/>
+        </record>
+<!--Menu que abre Ordenes de reparacion-->
+        <menuitem
+            name="Reparaciones"
+            id="menu_repair_root"
+            parent="menu_bag_service_main"/>
+        <menuitem
+            name="Orden de Reparacion"
+            action="action_service"
+            id="menu_service_order"
+            parent="menu_repair_root"
+      sequence="3"
+            />
+        
+   <menuitem
+            name="Configuracion"
+            id="menu_action_repair_config"
+            parent="menu_repair_root"
+            groups='bag_service.grupo_admin_xml'/>
+            
+
+        <record model="ir.actions.act_window" id="action_repair_airline">
+            <field name="name">Aerolineas</field>
+            <field name="res_model">bag.airline</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+        </record>
+        <menuitem
+            action="action_repair_airline"
+            id="menu_action_repair_airline"
+            parent="menu_action_repair_config"/>
+
+        <record model="ir.ui.view" id="view_repair_pricelist_form">
+            <field name="name">pricelist.form</field>
+            <field name="model">bag.pricelist</field>
+            <field name="type">form</field>
+            <field eval="4" name="priority"/>
+            <field name="arch" type="xml">
+                <form string="Lista de Precios">
+                    <group col="8" colspan="4">
+                        <field name="name"/>
+                        <field name="airline_id"/>
+                        <field name="date_start"/>
+                        <field name="date_end"/>
+                        <field name="tope1"/>
+                        <field name="tope2"/>
+                    </group>
+                    <field colspan="2" name="pricelist_lines" nolabel="1">
+                        <tree string="Precios Trabajos" editable="top">
+                            <field name="work_id"/>
+                            <field name="price"/>
+                        </tree>
+                    </field>
+                    <group col="2">
+	                    <field colspan="2" name="pricelist_lines_envios" nolabel="1">
+	                        <tree string="Precios Envios" editable="top">
+	                            <field name="send_id"/>
+	                            <field name="price"/>
+	                        </tree>
+	                    </field>
+	                    <button colspan="2" name="create_lines" string="Completar Trabajos" type="object" icon="terp-document-new"/>
+	                    <button colspan="2" name="create_lines_envios" string="Completar Envios" type="object" icon="terp-document-new"/>
+	                </group>    
+                </form>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="view_repair_pricelist_tree">
+            <field name="name">pricelist.tree</field>
+            <field name="model">bag.pricelist</field>
+            <field name="type">tree</field>
+            <field eval="4" name="priority"/>
+            <field name="arch" type="xml">
+                <tree string="Lista de Precios">
+                    <field name="name"/>
+                    <field name="airline_id"/>
+                    <field name="date_start"/>
+                    <field name="date_end"/>
+                    <field name="tope1"/>
+                    <field name="tope2"/>
+                </tree>
+            </field>
+        </record>
+
+        <record model="ir.actions.act_window" id="action_repair_pricelist">
+            <field name="name">Listas de Precios</field>
+            <field name="res_model">bag.pricelist</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+        </record>
+        <menuitem
+            action="action_repair_pricelist"
+            id="menu_action_repair_pricelist"
+            parent="menu_action_repair_config"/>
+
+        <record model="ir.actions.act_window" id="action_repair_type">
+            <field name="name">Equipajes Tipos</field>
+            <field name="res_model">bag.type</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+        </record>
+        <menuitem
+            action="action_repair_type"
+            id="menu_action_repair_type"
+            parent="menu_action_repair_config"/>
+
+        <record model="ir.actions.act_window" id="action_repair_format">
+            <field name="name">Equipajes Formatos</field>
+            <field name="res_model">bag.format</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+        </record>
+        <menuitem
+            action="action_repair_format"
+            id="menu_action_repair_format"
+            parent="menu_action_repair_config"/>
+
+        <record model="ir.actions.act_window" id="action_repair_color">
+            <field name="name">Equipajes Colores</field>
+            <field name="res_model">bag.color</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+        </record>
+        <menuitem
+            action="action_repair_color"
+            id="menu_action_repair_color"
+            parent="menu_action_repair_config"/>
+
+        <record model="ir.actions.act_window" id="action_repair_material">
+            <field name="name">Equipajes Materiales</field>
+            <field name="res_model">bag.material</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+        </record>
+        <menuitem
+            action="action_repair_material"
+            id="menu_action_repair_material"
+            parent="menu_action_repair_config"/>
+
+        <record model="ir.actions.act_window" id="action_repair_size">
+            <field name="name">Equipajes Tamaños</field>
+            <field name="res_model">bag.size</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+        </record>
+        <menuitem
+            action="action_repair_size"
+            id="menu_action_repair_size"
+            parent="menu_action_repair_config"/>
+
+        <record model="ir.actions.act_window" id="action_repair_supplier">
+            <field name="name">Proveedores de Reparaciones</field>
+            <field name="res_model">bag.supplier</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+        </record>
+        <menuitem
+            action="action_repair_supplier"
+            id="menu_action_repair_supplier"
+            parent="menu_action_repair_config"/>
+
+        <record model="ir.actions.act_window" id="action_repair_work">
+            <field name="name">Trabajos Reparacion</field>
+            <field name="res_model">bag.work</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+        </record>
+        <menuitem
+            action="action_repair_work"
+            id="menu_action_repair_work"
+            parent="menu_action_repair_config"/>
+
+        <record id="view_repair_work_tree" model="ir.ui.view">
+            <field name="name">repair.work.tree</field>
+            <field name="model">bag.work</field>
+            <field name="type">tree</field>
+            <field name="arch" type="xml">
+                <tree string="Trabajos Reparacion">
+                    <field name="code"/>
+                    <field name="name"/>
+                    <field name="without_discount"/>
+                </tree>
+            </field>
+        </record>
+
+        <record model="ir.actions.act_window" id="action_repair_envio">
+            <field name="name">Envios Reparacion</field>
+            <field name="res_model">bag.sending</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+        </record>
+        <menuitem
+            action="action_repair_envio"
+            id="menu_action_repair_envio"
+            parent="menu_action_repair_config"/>
+
+        <record model="ir.actions.act_window" id="action_repair_state">
+            <field name="name">Estados Reparacion</field>
+            <field name="res_model">bag.state</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+        </record>
+        <menuitem
+            action="action_repair_state"
+            id="menu_action_repair_state"
+            parent="menu_action_repair_config"/>
+
+        <record model="ir.actions.act_window" id="action_repair_state_samsonite">
+            <field name="name">Estados Samsonite</field>
+            <field name="res_model">bag.state.samsonite</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+        </record>
+        <menuitem
+            action="action_repair_state_samsonite"
+            id="menu_action_repair_state_samsonite"
+            parent="menu_action_repair_config"/>
+
+        <record model="ir.ui.view" id="view_repair_shelving_tree">
+            <field name="name">shelving.tree</field>
+            <field name="model">bag.shelving</field>
+            <field name="type">tree</field>
+            <field name="arch" type="xml">
+                <tree string="Estanterias">
+                    <field name="name" string="Estateria"/>
+                    <field name="code" string="Codigo"/>
+                    <field name="state_id" string="Estado"/>
+                </tree>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="view_repair_shelving_search">
+            <field name="name">shelving.search</field>
+            <field name="model">bag.shelving</field>
+            <field name="type">search</field>
+            <field name="arch" type="xml">
+                <search string="Estanterias LA BUSQUEDA?">
+                    <filter name="name" string="Estateria"/>
+                    <filter name="code" string="Codigo"/>
+                    <filter name="state_id" string="Estado"/>
+                </search>
+            </field>
+        </record>
+
+        <record model="ir.actions.act_window" id="action_repair_shelving">
+            <field name="name">Estanterias</field>
+            <field name="res_model">bag.shelving</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="search_view_id" ref="view_repair_shelving_search"></field>
+        </record>
+        <menuitem
+            action="action_repair_shelving"
+            id="menu_action_repair_shelving"
+            parent="menu_action_repair_config"/>
+
+        <record model="ir.actions.act_window" id="action_repair_location">
+            <field name="name">Ubicaciones</field>
+            <field name="res_model">bag.location</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+        </record>
+        <menuitem
+            action="action_repair_location"
+            id="menu_action_repair_location"
+            parent="menu_action_repair_config"/>
+
+
+        <record id="view_bag_puestos_trabajo" model="ir.ui.view">
+            <field name="name">Puestos de Trabajo</field>
+            <field name="model">bag.puestos_trabajo</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <form string="Puestos de Trabajo">
+                    <field name="service_id" required="True" on_change='onchange_service_id(service_id,shelving_id)'/>
+                    <field name="shelving_id" string="Puesto" required="True" on_change='onchange_shelving_id(service_id,shelving_id)'/>
+                    <separator colspan="4" string="Trabajo Realizado"/>
+                    <field name="work_done" nolabel="1" colspan="4">
+                        <tree string="Trabajo Realizado" editable="bottom">
+                            <field name="work_id" string="Trabajo"/>
+                            <field name="quantity" string="Cantidad"/>
+                            <field name="trabajo_realizado" string="Realizado"/>
+                        </tree>
+                    </field>
+                   	<separator string="Observaciones de las Tareas" colspan="4"/>
+                   	<field name="notas_orden" nolabel="1" readonly="1" colspan="4"/>
+                   	<separator string="Nota en Reparacion" colspan="4" />
+                   	<field name="work_made" nolabel="1" colspan="4"/>
+                    <group col="4" colspan="4">
+                        <field name="state"/>
+                        <button icon="gtk-ok" name="confirm" string="Finalizar" states="draft"/>
+                    </group>
+                </form>
+            </field>
+        </record>
+
+        <record id="action_bag_puestos_trabajo" model="ir.actions.act_window">
+            <field name="name">Puestos de Trabajo</field>
+            <field name="res_model">bag.puestos_trabajo</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form</field>
+        </record>
+
+    <menuitem
+        action="action_bag_puestos_trabajo"
+        id="menu_wizard_puestos_trabajo"
+        parent="menu_repair_root"
+        groups='bag_service.grupo_logistica_xml,bag_service.grupo_facturacion_xml,bag_service.grupo_mostrador_xml'/>
+
+        <record model="ir.ui.view" id="pagos_caja_form_view">
+                <field name="name">pagos.caja.form</field>
+                <field name="model">bag.work_payments</field>
+                <field name="type">form</field>
+                <field name="arch" type="xml">
+                        <form string="Pagos de Caja">
+                            <field name="payment_date" readonly="1"/>
+                            <field name="service_id" default_focus="1" on_change="onchange_service_id(service_id)"/>
+                            <field name="importe_total" readonly="1"/>
+                            <field name="amount" on_change="onchange_amount(service_id, amount, importe_total)"/>
+                            <field name="payment_type"/>
+                            <field name="method"/>
+                            <field name="invoice_number"/>
+                            <field name="cupon_number"/>
+                        </form>
+                </field>
+            </record>            
+            
+            <record model="ir.ui.view" id="pagos_caja_tree_view">
+                <field name="name">pagos.caja.tree</field>
+                <field name="model">bag.work_payments</field>
+                <field name="type">tree</field>
+                <field name="arch" type="xml">
+                        <tree string="Pagos de Caja">
+                            <field name="payment_date"/>
+                            <field name="invoice_number"/>
+                            <field name="amount"/>
+                            <field name="method"/>
+                            <field name="payment_type"/>
+                            <field name="service_id"/>
+                        </tree>
+                        
+                </field>
+            </record>
+            <record model="ir.actions.act_window" id="action_pagos_caja_tree_view">
+                <field name="name">Pagos Caja</field>
+                <field name="type">ir.actions.act_window</field>
+                <field name="res_model">bag.work_payments</field>
+                <field name="view_type">form</field>
+                <field name="view_mode">tree,form</field>
+                <field name="view_id" ref="pagos_caja_tree_view"/>
+            </record>
+            
+       <menuitem id='modulo_caja_menu' 
+            parent='menu_repair_root' 
+            action='action_pagos_caja_tree_view'
+            groups='bag_service.grupo_admin_xml'/>
+
+    </data>
+</openerp>
+
+

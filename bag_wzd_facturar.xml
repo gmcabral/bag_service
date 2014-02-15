@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+                    
+        <record id='action_wizard_facturar' model='ir.actions.act_window'>
+            <field name='name'>Facturar</field>
+            <field name='res_model'>bag.wzd_facturar</field>
+            <field name='view_type'>form</field>
+            <field name='view_mode'>form</field>
+            <field name='target'>new</field>            
+        </record>
+        
+        <record id='view_wizard_facturar' model='ir.ui.view'>
+            <field name='name'>Facturar</field>
+            <field name='model'>bag.wzd_facturar</field>
+            <field name='type'>form</field>
+            <field name='arch' type='xml'>
+                <form string='Facturar'>
+                    <field name='factura' string='Factura' required='True'/>
+		    <newline/>    
+                    <field name='resumen_ids' string='Resumenes'>                    
+                        <tree editable='bottom'>
+                            <field name='resumen' string='Resumen'/>
+                        </tree>
+                    </field>                  
+                    <group col='4' colspan='4'>
+                        <button icon='gtk-cancel' special='cancel' string='Cancelar'/>
+                        <button icon='gtk-ok' type='object' string='Facturar' name='facturar'/>
+                        <button icon='gtk-ok' type='object' string='Anular' name='anular'/>                        
+                    </group>
+                </form>
+            </field>
+        </record>  
+        
+    <menuitem action="action_wizard_facturar"
+		id="menu_wizard_facturar"
+		parent="menu_repair_root"
+        groups='grupo_facturacion_xml'/>
+              
+<!--
+        <record id='action_repair_facturar' model='ir.actions.act_window'>
+            <field name='name'>Facturar</field>
+            <field name='src_model'>bag.service</field>
+            <field name='res_model'>repair.facturar</field>
+            <field name='view_type'>form</field>
+            <field name='view_mode'>form</field>
+            <field name='target'>new</field>    
+            <field name='type'>ir.actions.act_window</field>
+            <field name='key2'>client_action_multi</field>                    
+        </record>
+
+        <wizard string='Facturar' 
+		model='repair.facturar'
+                 name='repair.facturar'
+                 id='action_repair_facturar'/>
+                    
+        <record id='view_repair_facturar' model='ir.ui.view'>
+            <field name='name'>Facturar</field>
+            <field name='model'>repair.facturar</field>
+            <field name='type'>form</field>
+            <field name='arch' type='xml'>
+                <form string='Facturar'>
+                    <field name='summary_number' string='Nro. Resumen' required='True'/>
+                    <group col='4' colspan='4'>
+                        <field name='state'/>
+                        <button icon='gtk-ok' name='confirm' string='Facturar'/>
+                    </group>
+                </form>
+            </field>
+        </record>  
+                  -->          
+    </data>
+</openerp>

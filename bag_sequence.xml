@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data noupdate="1">
+
+        <record id="seq_type_repair" forcecreate="1" model="ir.sequence.type">
+            <field name="name">Orden de Reparacion</field>
+            <field name="code">bag.service</field>
+        </record>
+        <record id="seq_guias" forcecreate="1" model="ir.sequence">
+            <field name="name">Orden de Reparacion</field>
+            <field name="code">bag.service</field>
+        </record>
+
+    </data>
+</openerp>

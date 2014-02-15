@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+                    
+        <record id='view_bag_marca_hoja_ruta' model='ir.ui.view'>
+            <field name='name'>Marcar Hoja de Ruta</field>
+            <field name='model'>bag.wzd_marca_hoja_ruta</field>
+            <field name='type'>form</field>
+            <field name='arch' type='xml'>
+                <form string='Marcar Hojas de Ruta'>
+                    <button name="marca_hoja_ruta" string="Confirm" type="object"/>
+                </form>
+            </field>
+        </record>  
+        
+<act_window
+    id="wzd_marca_hoja_ruta"
+    name="Marca Hoja de Ruta"
+    src_model="bag.service"
+    res_model="bag.wzd_marca_hoja_ruta"
+    view_id="view_bag_marca_hoja_ruta"
+    multi="True"
+    target="new"
+    groups="grupo_logistica_xml"/>
+
+        <record id='view_bag_desmarca_hoja_ruta' model='ir.ui.view'>
+            <field name='name'>Desmarcar Hoja de Ruta</field>
+            <field name='model'>bag.wzd_desmarca_hoja_ruta</field>
+            <field name='type'>form</field>
+            <field name='arch' type='xml'>
+                <form string='Desmarcar Hojas de Ruta'>
+                    <button name="desmarca_hoja_ruta" string="Confirmar" type="object"/>
+                </form>
+            </field>
+        </record>  
+        
+<act_window
+    id="wzd_desmarca_hoja_ruta"
+    name="Desmarca Hoja de Ruta"
+    src_model="bag.service"
+    res_model="bag.wzd_desmarca_hoja_ruta"
+    view_id="view_bag_desmarca_hoja_ruta"
+    multi="True"
+    target="new"
+    groups='grupo_logistica_xml'/>
+    
+                            
+    </data>
+</openerp>

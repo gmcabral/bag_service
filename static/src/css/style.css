@@ -1,0 +1,88 @@
+oe_login_bottom {
+background-color: #FF8C22;
+background-image: linear-gradient(to bottom, #FFE000, #FF7508);
+}
+
+.openerp .oe_searchview {
+float: left;
+}
+.openerp .oe_application .oe_breadcrumb_title > * {
+  display: inline-block;
+  overflow: hidden;
+  padding-right: 21px;
+}
+
+.openerp .oe_list_content > tbody > tr > td.oe_list_field_cell {
+padding: 3px 6px;
+white-space: nowrap;
+}
+
+.openerp td.oe_form_group_cell_label{
+border-left: solid;
+border-bottom: solid;
+border-top: solid;
+border-color: darkgray;
+border-width: 1px;
+}
+
+.internal_notes{
+height: 80px;
+}
+
+.openerp .oe_form .oe_form_field_text .oe_form_text_content{
+max-height: 100%;
+resize: none;
+overflow-y: scroll;
+overflow-x: hidden;
+}
+
+.openerp .oe_form td.oe_form_group_cell_label label{
+min-width: 0px;
+}
+.openerp .oe_form .oe_form_group .oe_form_group_cell.oe_group_right{
+border-right: none;
+border-bottom: none;
+border-top: none;
+}
+.openerp .oe_form td.oe_form_group_cell + .oe_form_group_cell{
+border-right: solid;
+border-bottom: solid;
+border-top: solid;
+border-color: darkgray;
+border-width: 1px;
+}
+
+.openerp .oe_form td.oe_form_group_cell_label {
+border-right: 0;
+padding: 0px 0px;
+}
+
+ .nro_orden{
+font-weight: bold;
+font-size: larger;
+}
+ .negrita{
+font-weight: bold;
+}
+
+
+.openerp td {
+vertical-align: middle;
+}
+
+.openerp .oe_form td.oe_form_group_cell + .oe_form_group_cell {
+vertical-align: top;
+}
+
+
+.field_text{
+max-height: 100%;
+resize: none;
+overflow-y: scroll;
+overflow-x: hidden;
+
+}
+
+.openerp .oe_leftbar{
+vertical-align: top;
+}

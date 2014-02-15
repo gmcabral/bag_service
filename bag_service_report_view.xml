@@ -1,0 +1,335 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+        <record model="ir.ui.view" id="view_repair_order_graph">
+            <field name="name">work.month.graph</field>
+            <field name="model">repair.report</field>
+            <field name="type">graph</field>
+            <field name="arch" type="xml">
+                <graph string="Repair Orders Statistics" type="bar">
+                    <field name="price" operator="+"/>
+                </graph>
+            </field>
+        </record>
+
+        <record id="view_repair_order_tree" model="ir.ui.view">
+            <field name="name">repair.order.tree</field>
+            <field name="model">repair.report</field>
+            <field name="type">tree</field>
+            <field name="arch" type="xml">
+                <tree string="Repair Orders Statistics">
+                    <field name="date" invisible="1"/>
+                    <field name="date_promised" invisible="1"/>
+                    <field name="date_return" invisible="1"/>
+                    <field name="create_uid" invisible="1"/>
+                    <field name="partner_id" invisible="1"/>
+                    <field name="airline_id" invisible="1"/>                    
+                    <field name="scale_id" invisible="1"/>                                        
+                    <field name="day" invisible="1"/>
+                    <field name="year" invisible="1"/>
+                    <field name="month" invisible="1"/>
+                    <field name="state_id" invisible="1"/>
+                    <field name="nbr" string="Líneas" sum="# de Líneas"/>
+                    <field name="price" sum="Precio"/>
+                    <field name="demora" sum="Dias"/>
+                    <field name="demora_pasada" sum="Dias Pasados"/>
+                </tree>
+            </field>
+        </record>
+
+        <record id="view_repair_order_search" model="ir.ui.view">
+        <field name="name">report.repair.order.search</field>
+        <field name="model">repair.report</field>
+        <field name="type">search</field>
+        <field name="arch" type="xml">
+            <search string="Repair Orders">
+            <group colspan="10" col="12">
+               <!-- <filter icon="terp-go-year" string="Año"
+                domain="[('date','&amp;lt;=', time.strftime('%%Y-%%m-%%d')),('date','&amp;gt;=',time.strftime('%%Y-01-01'))]" help="Order in current year"/>
+               <filter icon="terp-go-month" string="Mes"
+                        name="month"
+                        domain="[('date','&lt;=',(datetime.date.today()+relativedelta(day=31)).strftime('%%Y-%%m-%%d')),('date','&amp;gt;=',(datetime.date.today()-relativedelta(day=1)).strftime('%%Y-%%m-%%d'))]"
+                        help="Order in  current month"/>
+                <filter icon="terp-go-month"
+                         string="Mes-1"
+                         separator="1"
+                         domain="[('date','&amp;lt;', (datetime.date.today() - relativedelta(day=31, months=1)).strftime('%%Y-%%m-%%d')),('date','&amp;gt;=',(datetime.date.today() - relativedelta(day=1,months=1)).strftime('%%Y-%%m-%%d'))]"
+                         help="Order in last month"/> 
+                <separator orientation="vertical"/> -->
+                <filter icon="terp-document-new"
+                        string="Aerolinea"
+                        name="aerolineas"
+                        domain="[('type','=','airline')]"/>
+                <filter icon="terp-gtk-jump-to-rtl"
+                        string="Particular"
+                        name="particulares"
+                        domain="[('type','=','particular')]"/>
+                <separator orientation="vertical"/>
+                <field name="state_id"/>
+                <field name="airline_id"/>
+                <field name="scale_id"/>                
+                <field name="partner_id"/>
+                </group>
+                <newline/>
+                <group expand="0" string="Filtros Extendidos..." colspan="10" col="12" groups="base.group_extended">
+                    <field name="create_uid"/>
+                    <separator orientation="vertical"/>
+                    <separator orientation="vertical"/>
+                    <newline/>
+                    <field name="date"/>
+                    <field name="date_promised"/>
+                    <field name="date_return"/>                    
+                </group>
+                <newline/>
+                <group expand="1" string="Agrupar por..." colspan="10" col="12">
+                    <filter string="Aerolínea" name="group_airline_id" icon="terp-personal" context="{'group_by':'airline_id'}"/>
+                    <filter string="Usuario" name="Responsible" icon="terp-personal" context="{'group_by':'create_uid'}"/>
+ 					<separator orientation="vertical"/>
+                    <filter string="Estado" icon="terp-stock_effects-object-colorize" context="{'group_by':'state_id'}"/>
+                    <separator orientation="vertical"/>
+                    <separator orientation="vertical"/>
+                    <filter string="Dia" icon="terp-go-today" context="{'group_by':'day'}" help="Order of Day"/>
+                    <filter string="Mes" icon="terp-go-month" context="{'group_by':'month'}" help="Order of Month"/>
+                    <filter string="Año" icon="terp-go-year" context="{'group_by':'year'}" help="Order of Year"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <record model="ir.ui.view" id="view_repair_order_by_user_graph">
+            <field name="name">repair.order.by.user.graph</field>
+            <field name="model">repair.report</field>
+            <field name="type">graph</field>
+            <field name="arch" type="xml">
+                <graph string="Total de Reparaciones por Tipo, por Mes" orientation="vertical" type="bar">
+                    <field name="month" />
+                    <field name="nbr" operator="+"/>
+                    <field name="type" group="True" />
+                </graph>
+            </field>
+        </record>
+
+
+    <record id="action_repair_order_report_all" model="ir.actions.act_window">
+        <field name="name">Análisis Estadístico de Reparaciones</field>
+        <field name="res_model">repair.report</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">tree,graph</field>
+        <field name="view_id" ref="view_repair_order_tree"></field>
+        <field name="context">{'search_default_month':1,'search_default_group_airline_id':1, 'group_by_no_leaf':1,'group_by':[]}</field>
+    </record>
+
+    <record id="action_repair_order_by_user_all" model="ir.actions.act_window">
+        <field name="name">Total de Reparaciones por Tipo, por Mes</field>
+        <field name="res_model">repair.report</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">graph,tree</field>
+        <field name="view_id" ref="view_repair_order_by_user_graph"></field>
+    </record>
+
+    <record model="ir.ui.view" id="view_repair_by_supplier_graph">
+            <field name="name">repair.by.supplier.graph</field>
+            <field name="model">repair.report</field>
+            <field name="type">graph</field>
+            <field name="arch" type="xml">
+                <graph string="Reparaciones por Aerolínea" type="bar">
+                    <field name="airline_id"/>
+                    <field name="nbr" operator="+"/>
+                </graph>
+            </field>
+        </record>
+    
+    <record model="ir.ui.view" id="view_repair_by_supplier_graph_pie">
+            <field name="name">repair.by.supplier.graph.pie</field>
+            <field name="model">repair.report</field>
+            <field name="type">graph</field>
+            <field name="arch" type="xml">
+                <graph string="Reparaciones por Aerolínea" type="pie">
+                    <field name="airline_id"/>
+                    <field name="nbr" operator="+"/>
+                </graph>
+            </field>
+        </record>
+
+	<record id="action_repair_by_supplier" model="ir.actions.act_window">
+        <field name="name">Reparaciones por Aerolínea (Barras)</field>
+        <field name="res_model">repair.report</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">tree</field>
+        <field name="domain">[('airline_id','&gt;',19)]</field>
+        <field name="context">{'group_by_no_leaf':1,'group_by':['airline_id']}</field>
+        <field name="view_id" ref="view_repair_by_supplier_graph"/>
+    </record>
+
+	<record id="action_repair_by_supplier_pie" model="ir.actions.act_window">
+        <field name="name">Reparaciones por Aerolínea (Torta)</field>
+        <field name="res_model">repair.report</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">tree</field>
+        <field name="domain">[('airline_id','&gt;',19)]</field>
+        <field name="context">{'group_by_no_leaf':1,'group_by':['airline_id']}</field>
+        <field name="view_id" ref="view_repair_by_supplier_graph_pie"/>
+    </record>
+
+
+        <record id="view_repair_work_tree" model="ir.ui.view">
+            <field name="name">repair.work.tree</field>
+            <field name="model">repair.work.report</field>
+            <field name="type">tree</field>
+            <field name="arch" type="xml">
+                <tree string="Repair Works Statistics">
+                    <field name="work_id" invisible="1"/>
+                    <field name="date" invisible="1"/>
+                    <field name="date_promised" invisible="1"/>
+                    <field name="date_return" invisible="1"/>
+                    <field name="create_uid" invisible="1"/>
+                    <field name="partner_id" invisible="1"/>
+                    <field name="airline_id" invisible="1"/>                    
+                    <field name="scale_id" invisible="1"/>                                        
+                    <field name="day" invisible="1"/>
+                    <field name="year" invisible="1"/>
+                    <field name="month" invisible="1"/>
+                    <field name="state_id" invisible="1"/>
+                    <field name="nbr" string="Líneas" sum="# de Líneas"/>
+                    <field name="quantity" sum="Cantidad"/>
+                    <field name="price" sum="Precio"/>
+                    <field name="demora" sum="Dias"/>
+                    <field name="demora_pasada" sum="Dias Pasados"/>
+                </tree>
+            </field>
+        </record>
+
+        <record id="view_repair_work_search" model="ir.ui.view">
+        <field name="name">report.repair.work.search</field>
+        <field name="model">repair.work.report</field>
+        <field name="type">search</field>
+        <field name="arch" type="xml">
+            <search string="Repair Works">
+            <group colspan="10" col="12">
+               <!-- <filter icon="terp-go-year" string="  Año  "
+                domain="[('date','&lt;=', time.strftime('%%Y-%%m-%%d')),('date','&gt;=',time.strftime('%%Y-01-01'))]"
+                help="Order in current year"/>
+                <filter icon="terp-go-month" string="   Mes   "
+                        name="month"
+                        domain="[('date','&lt;=',(datetime.date.today()+relativedelta(day=31)).strftime('%%Y-%%m-%%d')),('date','&gt;=',(datetime.date.today()-relativedelta(day=1)).strftime('%%Y-%%m-%%d'))]"
+                        help="Order in  current month"/>
+                <filter icon="terp-go-month"
+                         string="    Mes-1    "
+                         separator="1"
+                         domain="[('date','&lt;=', (datetime.date.today() - relativedelta(day=31, months=1)).strftime('%%Y-%%m-%%d')),('date','&gt;=',(datetime.date.today() - relativedelta(day=1,months=1)).strftime('%%Y-%%m-%%d'))]"
+                         help="Order in last month"/>
+                <separator orientation="vertical"/> -->
+                <filter icon="terp-document-new"
+                        string="Aerolinea"
+                        name="aerolineas"
+                        domain="[('type','=','airline')]"/>
+                <filter icon="terp-gtk-jump-to-rtl"
+                        string="Particular"
+                        name="particulares"
+                        domain="[('type','=','particular')]"/>
+                <separator orientation="vertical"/>
+                <field name="work_id"/>
+                <field name="state_id"/>
+                <field name="airline_id"/>
+                <field name="scale_id"/>                
+                <field name="partner_id"/>
+                </group>
+                <newline/>
+                <group expand="0" string="Filtros Extendidos..." colspan="10" col="12" groups="base.group_extended">
+                    <field name="create_uid"/>
+                    <separator orientation="vertical"/>
+                    <separator orientation="vertical"/>
+                    <newline/>
+                    <field name="date"/>
+                    <field name="date_promised"/>
+                    <field name="date_return"/>                    
+                </group>
+                <newline/>
+                <group expand="1" string="Agrupar por..." colspan="10" col="12">
+                    <filter string="Trabajo" name="group_work_id" icon="terp-personal" context="{'group_by':'work_id'}"/>
+ 					<separator orientation="vertical"/>                    
+                    <filter string="Aerolínea" name="group_airline_id" icon="terp-personal" context="{'group_by':'airline_id'}"/>
+                    <filter string="Usuario" name="Responsible" icon="terp-personal" context="{'group_by':'create_uid'}"/>
+ 					<separator orientation="vertical"/>
+                    <filter string="Estado" icon="terp-stock_effects-object-colorize" context="{'group_by':'state_id'}"/>
+                    <separator orientation="vertical"/>
+                    <separator orientation="vertical"/>
+                    <filter string="Dia" icon="terp-go-today" context="{'group_by':'day'}" help="Order of Day"/>
+                    <filter string="Mes" icon="terp-go-month" context="{'group_by':'month'}" help="Order of Month"/>
+                    <filter string="Año" icon="terp-go-year" context="{'group_by':'year'}" help="Order of Year"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <record id="action_repair_work_report_all" model="ir.actions.act_window">
+        <field name="name">Análisis Estadístico de Reparaciones por Trabajo</field>
+        <field name="res_model">repair.work.report</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">tree,graph</field>
+        <field name="view_id" ref="view_repair_work_tree"></field>
+        <field name="context">{'search_default_month':1,'search_default_group_work_id':1, 'group_by_no_leaf':1,'group_by':[]}</field>
+    </record>
+
+    <record model="ir.ui.view" id="view_qty_per_work_graph">
+            <field name="name">qty.per.work.graph</field>
+            <field name="model">repair.work.report</field>
+            <field name="type">graph</field>
+            <field name="arch" type="xml">
+                <graph string="Qty. per work" type="bar">
+                    <field name="work_id"/>                    
+                    <field name="quantity" operator="+"/>
+                </graph>
+            </field>
+        </record>
+	<record id="action_qty_per_work" model="ir.actions.act_window">
+        <field name="name">Cantidad por Trabajo</field>
+        <field name="res_model">repair.work.report</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">tree</field>
+        <field name="context">{'group_by_no_leaf':1,'group_by':['work_id']}</field>
+        <field name="domain">[('work_id','&gt;',199)]</field>        
+        <field name="view_id" ref="view_qty_per_work_graph"/>
+    </record>
+
+   	   <record model="ir.ui.view" id="view_po_per_month_tree">
+            <field name="name">qty.per.work.tree</field>
+            <field name="model">repair.work.report</field>
+            <field name="type">tree</field>
+            <field name="arch" type="xml">
+                <tree string="Reparaciones por Mes y Trabajo" >
+                    <field name="month"/>
+                    <field name="work_id" invisible="1"/>
+                    <field name="nbr" operator="+"/>
+                </tree>
+            </field>
+        </record>
+	<record id="action_po_per_month_tree" model="ir.actions.act_window">
+        <field name="name">Reparaciones por Mes y Trabajo</field>
+        <field name="res_model">repair.work.report</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">tree</field>
+		<field name="context">{'group_by_no_leaf':1,'group_by':['month','work_id']}</field>
+		<field name="view_id" ref="view_po_per_month_tree"/>
+    </record>
+
+    <menuitem id="base.next_id_73" name="Reporting" parent="menu_repair_root" sequence="8"/>
+    <menuitem action="action_repair_order_report_all" id="menu_action_repair_order_report_all" parent="base.next_id_73" sequence="3"/>
+    <menuitem action="action_repair_order_by_user_all" id="menu_action_repair_order_by_user_all" parent="base.next_id_73" sequence="25"/>        
+    <menuitem action="action_repair_by_supplier" id="menu_action_repair_by_supplier" parent="base.next_id_73" sequence="30"/>            
+    <menuitem action="action_repair_by_supplier_pie" id="menu_action_repair_by_supplier_pie" parent="base.next_id_73" sequence="35"/>            
+    <menuitem action="action_repair_work_report_all" id="menu_action_repair_work_report_all" parent="base.next_id_73" sequence="40"/>
+    <menuitem action="action_po_per_month_tree" id="menu_action_po_per_month_tree" parent="base.next_id_73" sequence="43"/>                        
+    <menuitem action="action_qty_per_work" id="menu_action_qty_per_work" parent="base.next_id_73" sequence="45"/>                    
+
+<!--
+  <record id="action_current_repairs" model="ir.actions.act_window">
+        <field name="name">Current repairs</field>
+        <field name="res_model">repair</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">tree,form</field>
+        <field name="view_id" ref="purchase.purchase_order_tree"/>
+      </record>
+-->
+    </data>
+</openerp>

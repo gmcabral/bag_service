@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+                    
+        <record id='view_bag_hoja_ruta' model='ir.ui.view'>
+            <field name='name'>Marcar Hoja de Ruta</field>
+            <field name='model'>bag.wzd_hoja_ruta</field>
+            <field name='type'>form</field>
+            <field name='arch' type='xml'>
+                <form string='Marcar Hojas de Ruta'>
+<!--                     <field name='service_id' required='True'/> -->
+<!--                     <field name='shelving_id' string='Puesto' required='True'/>                     -->
+<!--                     <separator colspan='4' string='Trabajo Realizado'/> -->
+<!--                     <field name='work_done' nolabel='1'>                     -->
+<!--                         <tree string='Trabajo Realizado' editable='bottom'> -->
+<!--                             <field name='work_id' string='Trabajo'/> -->
+<!--                         </tree> -->
+<!--                     </field>                 -->
+<!--                     <separator colspan='4' string='Nota en Reparacion'/> -->
+<!--                     <field name='work_made' colspan='4' nolabel='1'/> -->
+
+<!--                     <group col='4' colspan='4'> -->
+<!--                         <field name='state'/> -->
+<!--                         <button icon='gtk-ok' name='confirm' string='Finalizar' states='draft'/> -->
+<!--                     </group> -->
+                </form>
+            </field>
+        </record>  
+        
+<act_window
+    id="act_window_id"
+    name="Hoja de Ruta"
+    src_model="bag.wzd_hoja_ruta"
+    res_model="bag.service"
+    view_id="view_bag_hoja_ruta"
+    />
+                            
+    </data>
+</openerp>

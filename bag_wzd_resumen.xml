@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+                    
+        <record id='view_bag_marca_resumen' model='ir.ui.view'>
+            <field name='name'>Marcar Resumen</field>
+            <field name='model'>bag.wzd_marca_resumen</field>
+            <field name='type'>form</field>
+            <field name='arch' type='xml'>
+                <form string='Marcar Resumen'>
+                    <button name="marca_resumen" string="Confirmar" type="object"/>
+                </form>
+            </field>
+        </record>  
+        
+<act_window
+    id="wzd_marca_resumen"
+    name="Marca Resumen"
+    src_model="bag.service"
+    res_model="bag.wzd_marca_resumen"
+    view_id="view_bag_marca_resumen"
+    multi="True"
+    target="new"
+    groups='grupo_facturacion_xml'/>
+    
+
+        <record id='view_bag_desmarca_resumen' model='ir.ui.view'>
+            <field name='name'>Desmarcar Resumen</field>
+            <field name='model'>bag.wzd_desmarca_resumen</field>
+            <field name='type'>form</field>
+            <field name='arch' type='xml'>
+                <form string='Desmarcar Resumen'>
+                    <button name="desmarca_resumen" string="Confirmar" type="object"/>
+                </form>
+            </field>
+        </record>  
+        
+<act_window
+    id="wzd_demarca_resumen"
+    name="Desmarca Resumen"
+    src_model="bag.service"
+    res_model="bag.wzd_desmarca_resumen"
+    view_id="view_bag_desmarca_resumen"
+    multi="True"
+    target="new"
+    groups='grupo_facturacion_xml'/>    
+                            
+    </data>
+</openerp>

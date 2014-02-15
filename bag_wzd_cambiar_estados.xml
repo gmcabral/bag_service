@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+                    
+        <act_window name='Cambiar Estado Caja'
+            res_model='bag.cambiar_estado_caja'
+            src_model='bag.service'
+            view_mode='form'
+            target='new'
+            key2='client_action_multi'
+            id='action_wizard_cambiar_estado_caja'
+            groups='grupo_caja_xml'/>
+
+        <record id='view_wizard_cambiar_estado_caja' model='ir.ui.view'>
+            <field name='name'>Cambiar Estado Caja</field>
+            <field name='model'>bag.cambiar_estado_caja</field>
+            <field name='type'>form</field>
+            <field name='arch' type='xml'>
+                <form string='Cambio Estado'>
+                    <field name='state_id' string='Nvo. Estado' required='True'/>
+                    <group col='4' colspan='4'>
+                        <button icon='gtk-cancel' special='cancel' string='Cancelar'/>
+                        <button icon='gtk-ok' type='object' string='Cambio' name='cambiar_estado'/>
+                    </group>
+                </form>
+            </field>
+        </record> 
+      <act_window name='Cambiar Estado At. Cliente'
+            res_model='bag.cambiar_estado_at_cliente'
+            src_model='bag.service'
+            view_mode='form'
+            target='new'
+            key2='client_action_multi'
+            id='action_wizard_cambiar_estado_at_cliente'
+            groups='grupo_at_cliente_xml'/>
+
+        <record id='view_wizard_cambiar_estado_at_cliente' model='ir.ui.view'>
+            <field name='name'>Cambiar Estado AT Cliente</field>
+            <field name='model'>bag.cambiar_estado_at_cliente</field>
+            <field name='type'>form</field>
+            <field name='arch' type='xml'>
+                <form string='Cambio Estado'>
+                    <field name='state_id' string='Nvo. Estado' required='True'/>
+                    <group col='4' colspan='4'>
+                        <button icon='gtk-cancel' special='cancel' string='Cancelar'/>
+                        <button icon='gtk-ok' type='object' string='Cambio' name='cambiar_estado'/>
+                    </group>
+                </form>
+            </field>
+        </record>
+        <act_window name='Cambiar Estado Mostrador'
+            res_model='bag.cambiar_estado_mostrador'
+            src_model='bag.service'
+            view_mode='form'
+            target='new'
+            key2='client_action_multi'
+            id='action_wizard_cambiar_estado_mostrador'
+            groups='grupo_mostrador_xml'/>
+
+        <record id='view_wizard_cambiar_estado_mostrador' model='ir.ui.view'>
+            <field name='name'>Cambiar Estado Mostrador</field>
+            <field name='model'>bag.cambiar_estado_mostrador</field>
+            <field name='type'>form</field>
+            <field name='arch' type='xml'>
+                <form string='Cambio Estado'>
+                    <field name='state_id' string='Nvo. Estado' required='True'/>
+                    <group col='4' colspan='4'>
+                        <button icon='gtk-cancel' special='cancel' string='Cancelar'/>
+                        <button icon='gtk-ok' type='object' string='Cambio' name='cambiar_estado'/>
+                    </group>
+                </form>
+            </field>
+        </record>
+        <act_window name='Cambiar Estado Logistica'
+            res_model='bag.cambiar_estado_logistica'
+            src_model='bag.service'
+            view_mode='form'
+            target='new'
+            key2='client_action_multi'
+            id='action_wizard_cambiar_estado_logistica'
+            groups='grupo_logistica_xml'/>
+
+        <record id='view_wizard_cambiar_estado_logistica' model='ir.ui.view'>
+            <field name='name'>Cambiar Estado Logistica</field>
+            <field name='model'>bag.cambiar_estado_logistica</field>
+            <field name='type'>form</field>
+            <field name='arch' type='xml'>
+                <form string='Cambio Estado'>
+                    <field name='state_id' string='Nvo. Estado' required='True'/>
+                    <group col='4' colspan='4'>
+                        <button icon='gtk-cancel' special='cancel' string='Cancelar'/>
+                        <button icon='gtk-ok' type='object' string='Cambio' name='cambiar_estado'/>
+                    </group>
+                </form>
+            </field>
+        </record>
+        
+        <act_window name='Cambiar Estado Facturacion'
+            res_model='bag.cambiar_estado_facturacion'
+            src_model='bag.service'
+            view_mode='form'
+            target='new'
+            key2='client_action_multi'
+            id='action_wizard_cambiar_estado_facturacion'
+            groups='grupo_facturacion_xml'/>
+
+        <record id='view_wizard_cambiar_estado_facturacion' model='ir.ui.view'>
+            <field name='name'>Cambiar Estado Facturacion</field>
+            <field name='model'>bag.cambiar_estado_facturacion</field>
+            <field name='type'>form</field>
+            <field name='arch' type='xml'>
+                <form string='Cambio Estado'>
+                    <field name='state_id' string='Nvo. Estado' required='True'/>
+                    <group col='4' colspan='4'>
+                        <button icon='gtk-cancel' special='cancel' string='Cancelar'/>
+                        <button icon='gtk-ok' type='object' string='Cambio' name='cambiar_estado'/>
+                    </group>
+                </form>
+            </field>
+        </record>                                   
+    </data>
+</openerp>
