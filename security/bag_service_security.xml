@@ -7,27 +7,21 @@
 
     <record id="grupo_caja_xml" model="res.groups">
         <field name="name">Caja</field>
-<!--         <field name="category_id" ref="base.module_category_accounting_and_finance"/>  -->
     </record>
     <record id="grupo_facturacion_xml" model="res.groups">
         <field name="name">Facturación</field>
-<!--         <field name="category_id" ref="base.module_category_accounting_and_finance"/>  -->
     </record>
     <record id="grupo_at_cliente_xml" model="res.groups">
         <field name="name">Atencion Cliente</field>
-<!--         <field name="category_id" ref="base.module_category_accounting_and_finance"/>  -->
     </record>
     <record id="grupo_logistica_xml" model="res.groups">
         <field name="name">Logistica</field>
-<!--         <field name="category_id" ref="base.module_category_accounting_and_finance"/>  -->
     </record>
     <record id="grupo_mostrador_xml" model="res.groups">
         <field name="name">Mostrador</field>
-<!--         <field name="category_id" ref="base.module_category_accounting_and_finance"/>  -->
     </record>
     <record id="grupo_admin_xml" model="res.groups">
         <field name="name">Bagservice Admin</field>
-<!--         <field name="category_id" ref="base.module_category_accounting_and_finance"/>  -->
     </record>
 <!--     <record id="grupo_caja_xml" model="res.groups" context="{'noadmin':True}"> -->
 <!--         <field name="name">Grupo Caja 2</field> -->
